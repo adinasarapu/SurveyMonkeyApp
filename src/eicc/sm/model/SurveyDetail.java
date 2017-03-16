@@ -1,5 +1,7 @@
 package eicc.sm.model;
 
+import java.util.List;
+
 public class SurveyDetail {
 	String id;
 	String name;
@@ -8,6 +10,16 @@ public class SurveyDetail {
 	String questionCount;
 	String language; 
 	String dateModified;
+	
+	List<Response> reponseList;
+	
+	
+	public List<Response> getReponseList() {
+		return reponseList;
+	}
+	public void setReponseList(List<Response> reponseList) {
+		this.reponseList = reponseList;
+	}
 	public String getId() {
 		return id;
 	}
