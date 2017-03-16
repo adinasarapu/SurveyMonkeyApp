@@ -12,6 +12,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import eicc.sm.model.SurveyDetail;
+
 public class Surveydetails {
 	
 	/*	
@@ -65,12 +67,21 @@ public class Surveydetails {
 			String serveyDetails = getJsonWithEndpointRestMethod(ENDPOINT+"/"+survey_id, REST_METHOD);
 			// date_created; response_count; question_count; language; date_modified
 			JSONObject surveyDetailObj = new JSONObject(serveyDetails);
+			SurveyDetail sd = new SurveyDetail();
 			//System.out.println(serveyDetails);
+			
 			String date_created = surveyDetailObj.get("date_created").toString();
 			String response_count = surveyDetailObj.get("response_count").toString();
 			String question_count = surveyDetailObj.get("question_count").toString();
 			String language = surveyDetailObj.get("language").toString();
 			String date_modified = surveyDetailObj.get("date_modified").toString();
+			
+			sd.setDateCreated(date_created);
+			sd.setResponseCount(response_count);
+			sd.setQuestionCount(question_count);
+			sd.setLanguage(language);
+			sd.setDateModified(date_modified);
+			
 			System.out.println(survey_id+"\t"+survey_title+"\t"+date_created+"\t"+response_count+"\t"+question_count+"\t"+language+"\t"+date_modified);
 		}
 	}
