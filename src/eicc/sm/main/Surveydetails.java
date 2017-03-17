@@ -14,9 +14,12 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import eicc.sm.model.Answer;
 import eicc.sm.model.Collector;
+import eicc.sm.model.Question;
 import eicc.sm.model.Response;
 import eicc.sm.model.ResponseDetail;
+import eicc.sm.model.ResponsePage;
 import eicc.sm.model.SurveyDetail;
 
 public class Surveydetails {
@@ -42,6 +45,7 @@ public class Surveydetails {
 	 	/surveys
 	 	/surveys/{id}, 
 	 	/surveys/{id}/details
+	 	 * 
 	 	/surveys/{id}/responses/{id}
 	 	/surveys/{id}/responses/{id}/details
 	 	
@@ -132,12 +136,56 @@ public class Surveydetails {
 				res.setDateCreated(new JSONObject(resposnse).get("date_created").toString());
 				res.setSurveyId(new JSONObject(resposnse).get("survey_id").toString());
 				
-				System.out.println("Collector ID1 = "+ collector_id1);
+				// System.out.println("Collector ID1 = "+ collector_id1);
 				
 				String resDetails = getJsonWithEndpointRestMethod(ENDPOINT+"/"+survey_id+"/responses/"+resId+"/details", REST_METHOD);
 				
-				// List<ResponseDetail> resDetailList = new ArrayList<ResponseDetail>();
-				// ResponseDetail resDetail = new ResponseDetail();
+				ResponseDetail resDetail = new ResponseDetail();
+				resDetail.setId(new JSONObject(resDetails).get("id").toString());
+				resDetail.setIp_address(new JSONObject(resDetails).get("ip_address").toString());
+				resDetail.setTotal_time(new JSONObject(resDetails).get("total_time").toString());
+				resDetail.setDate_modified(new JSONObject(resDetails).get("date_modified").toString());
+				resDetail.setResponse_status(new JSONObject(resDetails).get("response_status").toString());
+				
+				JSONArray resDetailArr = new JSONObject(resDetails).getJSONArray("pages");
+				List<ResponsePage> pages = new ArrayList<ResponsePage>();
+				for (int m = 0; m < resDetailArr.length(); m++){
+					ResponsePage page = new ResponsePage();
+					JSONObject resDetailArrObj = resDetailArr.getJSONObject(m);
+					String resPageId = resDetailArrObj.getString("id");
+					page.setId(resPageId);
+					JSONArray questionArr = resDetailArrObj.getJSONArray("questions");
+					List<Question> questions = new ArrayList<Question>();
+					for(int n = 0; n < questionArr.length(); n++){
+						Question question = new Question();
+						JSONObject questionArrObj = questionArr.getJSONObject(m);
+						question.setId(questionArrObj.getString("id"));
+						JSONArray answerArr = questionArrObj.getJSONArray("answers");
+						List<Answer> answers = new ArrayList<Answer>();
+						for(int p = 0; p < answerArr.length(); p++){
+							Answer answer = new Answer();
+							JSONObject answerArrObj = answerArr.getJSONObject(p);
+							System.out.println("choice_id "+ answerArrObj.getString("choice_id"));
+							String choice_id = answerArrObj.getString("choice_id");
+							String row_id = answerArrObj.getString("row_id");
+							String text = answerArrObj.getString("text");
+							if(choice_id != null)
+								answer.setChoice_id(choice_id);
+							if(row_id != null)
+								answer.setRow_id(row_id);
+							if(text != null)
+								answer.setText(text);
+							answers.add(answer);
+						}
+						question.setAnswers(answers);
+						questions.add(question);
+					}
+					page.setQuestions(questions);
+					pages.add(page);
+				}
+				resDetail.setPages(pages);
+				res.setResponseDetail(resDetail);
+			
 				System.out.println(resDetails);
 				
 				Collector collector = new Collector();

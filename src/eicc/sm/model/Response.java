@@ -13,7 +13,14 @@ public class Response {
 	String dateCreated;
 	String surveyId;
 	Collector collector;
+	ResponseDetail responseDetail;
 	
+	public ResponseDetail getResponseDetail() {
+		return responseDetail;
+	}
+	public void setResponseDetail(ResponseDetail responseDetail) {
+		this.responseDetail = responseDetail;
+	}
 	public Collector getCollector() {
 		return collector;
 	}
