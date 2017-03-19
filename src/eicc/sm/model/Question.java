@@ -3,19 +3,28 @@ package eicc.sm.model;
 import java.util.List;
 
 public class Question {
+	int position;
+	String heading;
 	String id;
-	List<Answer> answers;
+	List<QuestionDetail> questionDetails;
 	
+	public int getPosition() {
+		return position;
+	}
+	public void setPosition(int position) {
+		this.position = position;
+	}
+	public String getHeading() {
+		return heading;
+	}
+	public void setHeading(String heading) {
+		this.heading = heading;
+	}
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public List<Answer> getAnswers() {
-		return answers;
-	}
-	public void setAnswers(List<Answer> answers) {
-		this.answers = answers;
-	}
+	
 }
