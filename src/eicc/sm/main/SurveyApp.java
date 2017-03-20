@@ -8,8 +8,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +28,7 @@ import eicc.sm.model.ResponseDetail;
 import eicc.sm.model.ResponsePage;
 import eicc.sm.model.SurveyDetail;
 
-public class Surveydetails {
+public class SurveyApp {
 	
 	/*	
 	 * http://jsonviewer.stack.hu
@@ -43,7 +46,7 @@ public class Surveydetails {
 	 */ 
 	// http://theoryapp.com/parse-json-in-java/
 	
-	static String HOST = "https://api.surveymonkey.net/v3/";
+	
 	/* 
 	 	/surveys
 	 	/surveys/{id}, 
@@ -70,86 +73,103 @@ public class Surveydetails {
 	 	 
 	 	/collectors/{id}/responses/{id}
 	*/
-
-	static String Access_Token = "bearer DR729crsCRsLBsqLMtAFjZnhiaihuC4cQqULmHqSsrcZILrfvO18Wh9evj8Bnj2DP-8MzVX3uNlAL63qpY.-MtfS2lW.1HwXx0OiJn2MOA3xWeTx.lFtRumFVXaZqizl";
-	static String ENDPOINT = "surveys";
-	// static String SURVEY_ID = "12088715"; // "87447384";
-	static String REST_METHOD = "GET";
+	// static String HOST = "https://api.surveymonkey.net/v3/";
+	//static String Access_Token = "bearer DR729crsCRsLBsqLMtAFjZnhiaihuC4cQqULmHqSsrcZILrfvO18Wh9evj8Bnj2DP-8MzVX3uNlAL63qpY.-MtfS2lW.1HwXx0OiJn2MOA3xWeTx.lFtRumFVXaZqizl";
+	static String ENDPOINT = null;
+	static String REST_METHOD = null;
+	static String Access_Token = null;
 	
 	public static void main(String args[]) {
-		ENDPOINT = HOST+ENDPOINT;
-		System.out.println(ENDPOINT);
-		// SURVEYS
-		String serveys = getJsonWithEndpointRestMethod(ENDPOINT, REST_METHOD);
-		//System.out.println(serveys);
+		//ENDPOINT = HOST+ENDPOINT;
+		// System.out.println(ENDPOINT);
+		ResourceBundle resourceBundle = ResourceBundle.getBundle("config");
+		Access_Token = resourceBundle.getString("Access_Token");
+		REST_METHOD = resourceBundle.getString("REST_METHOD");
+		ENDPOINT = resourceBundle.getString("ENDPOINT");
 		
+		System.out.println(Access_Token+"\n"+REST_METHOD+"\n"+ENDPOINT);
+		
+		/*List<SurveyDetail> sds = getAllServeys();
+		Iterator<SurveyDetail> sdIt = sds.iterator();
+		while(sdIt.hasNext()){
+			SurveyDetail sd = sdIt.next();
+			System.out.println(sd.getId() + "\t" + sd.getName());
+			Pages p = getServeyPages(sd.getId());
+		}*/
+	}
+
+	private static List<SurveyDetail> getAllServeys() {
+		String serveys = getJsonWithEndpointRestMethod(ENDPOINT, REST_METHOD);
 		JSONObject surveyObj = new JSONObject(serveys);
 		JSONArray arr = surveyObj.getJSONArray("data");
-		Map<String, String> surveyMap = new HashMap<String, String>();
+		// Map<String, String> surveyMap = new HashMap<String, String>();
 		List<SurveyDetail> surs = new ArrayList<SurveyDetail>();
-		for (int i = 0; i < arr.length(); i++)
-		{
-		    String survey_id = arr.getJSONObject(i).getString("id");
-		    String survey_title = arr.getJSONObject(i).getString("title");
-		    surveyMap.put(survey_id, survey_title);
+		for (int i = 0; i < arr.length(); i++) {
+			String survey_id = arr.getJSONObject(i).getString("id");
+			// String survey_title = arr.getJSONObject(i).getString("title");
+			// surveyMap.put(survey_id, survey_title);
+		
 			// SURVEY DETAILS
-			String serveyDetails = getJsonWithEndpointRestMethod(ENDPOINT+"/"+survey_id, REST_METHOD);
-			// date_created; response_count; question_count; language; date_modified
+			String serveyDetails = getJsonWithEndpointRestMethod(ENDPOINT + "/" + survey_id, REST_METHOD);
+			// date_created; response_count; question_count; language;
+			// date_modified
 			JSONObject surveyDetailObj = new JSONObject(serveyDetails);
 			SurveyDetail sd = new SurveyDetail();
-			//System.out.println(serveyDetails);
-			
-			String date_created = surveyDetailObj.get("date_created").toString();
-			String response_count = surveyDetailObj.get("response_count").toString();
-			String question_count = surveyDetailObj.get("question_count").toString();
-			String language = surveyDetailObj.get("language").toString();
-			String date_modified = surveyDetailObj.get("date_modified").toString();
-			
+
 			sd.setId(survey_id);
-			sd.setDateCreated(date_created);
-			sd.setResponseCount(response_count);
-			sd.setQuestionCount(question_count);
-			sd.setLanguage(language);
-			sd.setDateModified(date_modified);
-			
+			sd.setName(surveyDetailObj.get("name").toString());
+			sd.setDateCreated(surveyDetailObj.get("date_created").toString());
+			sd.setResponseCount(surveyDetailObj.get("response_count").toString());
+			sd.setQuestionCount(surveyDetailObj.get("question_count").toString());
+			sd.setLanguage(surveyDetailObj.get("language").toString());
+			sd.setDateModified(surveyDetailObj.get("date_modified").toString());
+
 			surs.add(sd);
-			
-			Pages pagesObj = new Pages();
-			String pages = getJsonWithEndpointRestMethod(ENDPOINT+"/"+survey_id+"/pages", REST_METHOD);
-			JSONObject pagesJsonObj = new JSONObject(pages);
-			if(!pagesJsonObj.isNull("total")){
-				pagesObj.setTotalPageCount(pagesJsonObj.getInt("total"));
-			}
-			JSONArray pagesObjArr = null;
-			// System.out.println("total pages --> "+ pagesJsonObj.getString("total"));
-			if(!pagesJsonObj.isNull("data")){
-				pagesObjArr = pagesJsonObj.getJSONArray("data");
-			}
-			if(pagesObjArr != null){
-				List<Page> pageList = new ArrayList<Page>();
-				for (int j = 0; j < pagesObjArr.length(); j++){
-					Page page = getPage(pagesObjArr, j);
-					String questions = getJsonWithEndpointRestMethod(ENDPOINT+"/"+sd.getId()+"/pages/"+page.getId()+"/questions", REST_METHOD);
-					//System.out.println(questions);
-					JSONObject questionsJsonObj = new JSONObject(questions);
-					JSONArray questionArr = null;
-					if(!questionsJsonObj.isNull("data")){
-						questionArr = questionsJsonObj.getJSONArray("data");
-					}
-					if(questionArr != null){
-						for(int k = 0; k < questionArr.length();k++){
-							int tot = questionsJsonObj.getInt("total");
-							if(tot > 0){
-								System.out.println("tot > 0");
-								QuestionsObject questionObj = getQuestions(questionArr, sd, page, k);
-								questionObj.setTotalQuestionCount(tot);
-							}
+		}
+		return surs;
+	}
+
+	private static Pages getServeyPages(String survey_id) {
+		Pages pagesObj = new Pages();
+		String pages = getJsonWithEndpointRestMethod(ENDPOINT + "/" + survey_id + "/pages", REST_METHOD);
+		JSONObject pagesJsonObj = new JSONObject(pages);
+		if (!pagesJsonObj.isNull("total")) {
+			pagesObj.setTotalPageCount(pagesJsonObj.getInt("total"));
+		}
+		JSONArray pagesObjArr = null;
+		// System.out.println("total pages --> "+
+		// pagesJsonObj.getString("total"));
+		if (!pagesJsonObj.isNull("data")) {
+			pagesObjArr = pagesJsonObj.getJSONArray("data");
+		}
+		if (pagesObjArr != null) {
+			List<Page> pageList = new ArrayList<Page>();
+			for (int j = 0; j < pagesObjArr.length(); j++) {
+				Page page = getPage(pagesObjArr, j);
+				String questions = getJsonWithEndpointRestMethod(
+						ENDPOINT + "/" + survey_id + "/pages/" + page.getId() + "/questions", REST_METHOD);
+				// System.out.println(questions);
+				JSONObject questionsJsonObj = new JSONObject(questions);
+				JSONArray questionArr = null;
+				if (!questionsJsonObj.isNull("data")) {
+					questionArr = questionsJsonObj.getJSONArray("data");
+				}
+				if (questionArr != null) {
+					for (int k = 0; k < questionArr.length(); k++) {
+						int tot = questionsJsonObj.getInt("total");
+						if (tot > 0) {
+							System.out.println("tot > 0");
+							QuestionsObject questionObj = getQuestions(questionArr, survey_id, page, k);
+							questionObj.setTotalQuestionCount(tot);
 						}
 					}
-					pageList.add(page);
 				}
-				pagesObj.setPages(pageList);
+				pageList.add(page);
 			}
+			pagesObj.setPages(pageList);
+		}
+		return pagesObj;
+	}
 			
 			// sd.setReponse(res);
 			// System.out.println(survey_id+"\t"+survey_title+"\t"+date_created+"\t"+response_count+"\t"+question_count+"\t"+language+"\t"+date_modified);
@@ -240,10 +260,9 @@ public class Surveydetails {
 				 
 			}*/
 			//sd.setReponseList(resList);
-		}
-	}
 
-	private static QuestionsObject getQuestions(JSONArray questionsArr, SurveyDetail sd, Page page, int k) {
+
+	private static QuestionsObject getQuestions(JSONArray questionsArr, String survey_id, Page page, int k) {
 		QuestionsObject questions = new QuestionsObject();
 		JSONObject questionArrObj = questionsArr.getJSONObject(k);
 		JSONArray questionArr = null;
@@ -260,7 +279,7 @@ public class Surveydetails {
 				question.setHeading(heading);
 				question.setId(id);
 				question.setPosition(position);
-				String questionDetail = getJsonWithEndpointRestMethod(ENDPOINT+"/"+sd.getId()+"/pages/"+page.getId()+"/questions/"+id, REST_METHOD);
+				String questionDetail = getJsonWithEndpointRestMethod(ENDPOINT+"/"+survey_id+"/pages/"+page.getId()+"/questions/"+id, REST_METHOD);
 				System.out.println("questionDetail = :" +questionDetail);
 				questionList.add(question);
 			}
@@ -361,7 +380,7 @@ public class Surveydetails {
 			
 			int k = conn.getResponseCode();
 			
-			//System.out.println("The response code received is " + k);
+			System.out.println("The response code received is " + k);
 			if (conn.getResponseCode() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
 			}
