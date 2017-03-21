@@ -6,7 +6,14 @@ public class Page {
 	String id;
 	int position;
 	String title;
+	QuestionsObject questionsObject;
 	
+	public QuestionsObject getQuestionsObject() {
+		return questionsObject;
+	}
+	public void setQuestionsObject(QuestionsObject questionsObject) {
+		this.questionsObject = questionsObject;
+	}
 	public String getDescription() {
 		return description;
 	}

@@ -6,8 +6,14 @@ public class Question {
 	int position;
 	String heading;
 	String id;
-	List<QuestionDetail> questionDetails;
+	QuestionDetail questionDetail;
 	
+	public QuestionDetail getQuestionDetails() {
+		return questionDetail;
+	}
+	public void setQuestionDetails(QuestionDetail questionDetail) {
+		this.questionDetail = questionDetail;
+	}
 	public int getPosition() {
 		return position;
 	}

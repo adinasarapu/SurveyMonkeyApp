@@ -4,7 +4,7 @@ import java.util.List;
 
 public class SurveyDetail {
 	String id;
-	String name;
+	String servey_title;
 	String dateCreated;
 	String responseCount; 
 	String questionCount;
@@ -26,11 +26,11 @@ public class SurveyDetail {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getName() {
-		return name;
+	public String getServeyTitle() {
+		return servey_title;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setSurveyTitle(String name) {
+		this.servey_title = name;
 	}
 	public String getDateCreated() {
 		return dateCreated;
