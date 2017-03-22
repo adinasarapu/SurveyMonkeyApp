@@ -106,20 +106,29 @@ public class SurveyApp {
 	static String ENDPOINT = null;
 	static String REST_METHOD = null;
 	static String Access_Token = null;
+
+	static String PAGES_JSON = null;
+	static String QUESTIONS_JSON = null;
+	static String QUESTIONS_DETAIL_JSON = null;
+	
 	static String SID = null;
 	
 	public static void main(String args[]) {
 		// ENDPOINT = HOST+ENDPOINT;
 		// System.out.println(ENDPOINT);
-		ResourceBundle resourceBundle = ResourceBundle.getBundle("config");
-		Access_Token = resourceBundle.getString("Access_Token");
-		REST_METHOD = resourceBundle.getString("REST_METHOD");
-		ENDPOINT = resourceBundle.getString("ENDPOINT");
+		ResourceBundle rB = ResourceBundle.getBundle("config");
 		
-		SID = "3622815";
+		Access_Token = rB.getString("Access_Token");
+		REST_METHOD = rB.getString("REST_METHOD");
+		ENDPOINT = rB.getString("ENDPOINT");
+		PAGES_JSON = rB.getString("PAGES_JSON");
+		QUESTIONS_JSON = rB.getString("QUESTIONS_JSON");
+		QUESTIONS_DETAIL_JSON = rB.getString("QUESTIONS_DETAIL_JSON");
 		
-		System.out.println(Access_Token+"\n"+REST_METHOD+"\n"+ENDPOINT);
+		//System.out.println(Access_Token+"\n"+REST_METHOD+"\n"+ENDPOINT);
 
+		SID = rB.getString("SID");
+		
 		/*List<SurveyDetail> sds = getAllServeys();
 		Iterator<SurveyDetail> sdIt = sds.iterator();
 		while(sdIt.hasNext()){
@@ -127,7 +136,8 @@ public class SurveyApp {
 			System.out.println(sd.getId() + "\t" + sd.getServeyTitle());
 			//Pages p = getServeyPages(sd.getId());
 		} */
-	
+		
+		System.out.println(SID);
 		Pages p = getServeyPages(SID);
 		int totalPages = p.getTotalPageCount();
 		System.out.println("Survey ID : "+SID+"\t"+"Total Pages: "+totalPages);
@@ -183,19 +193,22 @@ public class SurveyApp {
 
 	public static String readFile(String filename) {
 	    String result = "";
-	    try {
-	        BufferedReader br = new BufferedReader(new FileReader(filename));
-	        StringBuilder sb = new StringBuilder();
-	        String line = br.readLine();
-	        while (line != null) {
-	            sb.append(line);
-	            line = br.readLine();
-	        }
-	        result = sb.toString();
-	    } catch(Exception e) {
-	        e.printStackTrace();
-	    }
-	    return result;
+	    File f = new File(filename);
+		if(f.exists()){
+			try {
+		        BufferedReader br = new BufferedReader(new FileReader(filename));
+		        StringBuilder sb = new StringBuilder();
+		        String line = br.readLine();
+		        while (line != null) {
+		            sb.append(line);
+		            line = br.readLine();
+		        }
+		        result = sb.toString();
+		    } catch(Exception e) {
+		        e.printStackTrace();
+		    } 
+		}
+		return result;  
 	}
 	
 	private static Pages getServeyPages(String survey_id) {
@@ -203,13 +216,19 @@ public class SurveyApp {
 		Pages pagesObj = new Pages();
 		
 		// READ the local JSON file, if not DOWNLOAD IT!
-		String PAGES_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/pages.json";
+		//String PAGES_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/pages.json";
 		String pages = readFile(PAGES_JSON);
-		if("".equals("pages")){
+		if("".equals(pages)){
+			System.out.println("downloading file " +PAGES_JSON);
 			pages = getJsonWithEndpointRestMethod(ENDPOINT + "/" + survey_id + "/pages", REST_METHOD);
-			writeFile(PAGES_JSON, pages);
+			try {
+				writeFile(PAGES_JSON, pages);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		
+		System.out.println(pages);
 		JSONObject pagesJsonObj = new JSONObject(pages);
 		if (!pagesJsonObj.isNull("total")) {
 			pagesObj.setTotalPageCount(pagesJsonObj.getInt("total"));
@@ -226,11 +245,16 @@ public class SurveyApp {
 				Page page = getPage(pagesObjArr, j);
 	
 				// READ the local JSON file, if not DOWNLOAD IT!
-				String QUESTIONS_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/questions.json";
+				//String QUESTIONS_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/questions.json";
 				String questions = readFile(QUESTIONS_JSON);
 				if("".equals(questions)){
 					questions = getJsonWithEndpointRestMethod(ENDPOINT + "/" + survey_id + "/pages/" + page.getId() + "/questions", REST_METHOD);
-					writeFile(QUESTIONS_JSON, questions);
+					try {
+						writeFile(QUESTIONS_JSON, questions);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 
 				// System.out.println("questions --> "+questions);
@@ -253,21 +277,20 @@ public class SurveyApp {
 		return pagesObj;
 	}
 
-	private static void writeFile(String PAGES_JSON, String pages) {
-		FileWriter fw = null;
-		try {
-			fw = new FileWriter(PAGES_JSON);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	private static void writeFile(String FILE_JSON, String pages) throws IOException {
+		FileWriter fw = new FileWriter(FILE_JSON);
+		fw.write(pages);
+		fw.close();
+	}
+	
+	public static void writeFile2() throws IOException {
+		FileWriter fw = new FileWriter("out.txt");
+	 
+		for (int i = 0; i < 10; i++) {
+			fw.write("something");
 		}
-		  BufferedWriter bw = new BufferedWriter(fw);
-		  try {
-			bw.write(pages);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	 
+		fw.close();
 	}
 			
 			// sd.setReponse(res);
@@ -372,11 +395,16 @@ public class SurveyApp {
 			
 			// Detailed description of question
 			// READ the local JSON file, if not DOWNLOAD IT!
-			String QUESTIONS_DETAIL_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/questionDetail.json";
+			// String QUESTIONS_DETAIL_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/questionDetail.json";
 			String questionDetailJSON = readFile(QUESTIONS_DETAIL_JSON);
-			if("".equals(questions)){
+			if("".equals(questionDetailJSON)){
 				questionDetailJSON = getJsonWithEndpointRestMethod(ENDPOINT+"/"+survey_id+"/pages/"+page.getId()+"/questions/"+qid, REST_METHOD);
-				writeFile(QUESTIONS_DETAIL_JSON, questionDetailJSON);
+				try {
+					writeFile(QUESTIONS_DETAIL_JSON, questionDetailJSON);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			// System.out.println("questionDetail = :" +questionDetailJSON);
