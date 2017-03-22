@@ -5,7 +5,7 @@ import java.util.List;
 public class QuestionsObject {
 	
 	int total;
-	List<Question> questions;
+	List<Question> questions = null;
 	
 	public int getTotalQuestionCount() {
 		return total;

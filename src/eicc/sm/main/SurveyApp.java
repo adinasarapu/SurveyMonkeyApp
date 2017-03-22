@@ -137,7 +137,7 @@ public class SurveyApp {
 			//Pages p = getServeyPages(sd.getId());
 		} */
 		
-		System.out.println(SID);
+		//System.out.println(SID);
 		Pages p = getServeyPages(SID);
 		int totalPages = p.getTotalPageCount();
 		System.out.println("Survey ID : "+SID+"\t"+"Total Pages: "+totalPages);
@@ -147,14 +147,19 @@ public class SurveyApp {
 		while(pageIt.hasNext()){
 			Page page1 = pageIt.next();
 			String id = page1.getId();
-			System.out.println("Page:"+y + "\tP.ID:" + id);
+			//System.out.println("Page#"+y + "==> [Page.ID:" + id+"]");
 			y = y+1;
 			QuestionsObject questionsObject = page1.getQuestionsObject();
-			List<Question> questions = questionsObject.getQuestions();
-			Iterator<Question> questionsIt = questions.iterator();
-			while(questionsIt.hasNext()){
-				Question question = questionsIt.next();
-				System.out.println("Q.ID"+question.getId()+"\t"+question.getHeading()); 
+			if(questionsObject != null){
+				List<Question> questions = questionsObject.getQuestions();
+				Iterator<Question> questionsIt = questions.iterator();
+				while(questionsIt.hasNext()){
+					Question question = questionsIt.next();
+					System.out.println("\t"+question.getHeading()); 
+					// System.out.println("\tQ.ID: "+question.getId()+"\t"+question.getHeading()); 
+				}
+			} else {
+				//System.out.println("\tQ.ID: "+"NaN"+"\t"+"Not Available!!!"); 
 			}
 		}
 	}
@@ -195,6 +200,7 @@ public class SurveyApp {
 	    String result = "";
 	    File f = new File(filename);
 		if(f.exists()){
+			// System.out.println("Reading local JSON file "+filename);
 			try {
 		        BufferedReader br = new BufferedReader(new FileReader(filename));
 		        StringBuilder sb = new StringBuilder();
@@ -228,7 +234,7 @@ public class SurveyApp {
 				e.printStackTrace();
 			}
 		}
-		System.out.println(pages);
+		//System.out.println(pages);
 		JSONObject pagesJsonObj = new JSONObject(pages);
 		if (!pagesJsonObj.isNull("total")) {
 			pagesObj.setTotalPageCount(pagesJsonObj.getInt("total"));
@@ -246,11 +252,12 @@ public class SurveyApp {
 	
 				// READ the local JSON file, if not DOWNLOAD IT!
 				//String QUESTIONS_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/questions.json";
-				String questions = readFile(QUESTIONS_JSON);
+				String QUESTION_JSON = QUESTIONS_JSON+"_"+survey_id+"_"+page.getId()+".json";
+				String questions = readFile(QUESTION_JSON);
 				if("".equals(questions)){
 					questions = getJsonWithEndpointRestMethod(ENDPOINT + "/" + survey_id + "/pages/" + page.getId() + "/questions", REST_METHOD);
 					try {
-						writeFile(QUESTIONS_JSON, questions);
+						writeFile(QUESTION_JSON, questions);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -283,16 +290,6 @@ public class SurveyApp {
 		fw.close();
 	}
 	
-	public static void writeFile2() throws IOException {
-		FileWriter fw = new FileWriter("out.txt");
-	 
-		for (int i = 0; i < 10; i++) {
-			fw.write("something");
-		}
-	 
-		fw.close();
-	}
-			
 			// sd.setReponse(res);
 			// System.out.println(survey_id+"\t"+survey_title+"\t"+date_created+"\t"+response_count+"\t"+question_count+"\t"+language+"\t"+date_modified);
 			
@@ -396,11 +393,12 @@ public class SurveyApp {
 			// Detailed description of question
 			// READ the local JSON file, if not DOWNLOAD IT!
 			// String QUESTIONS_DETAIL_JSON = "/Users/adinasarapu/Documents/SurveyMonkey/questionDetail.json";
-			String questionDetailJSON = readFile(QUESTIONS_DETAIL_JSON);
+			String DETAIL_JSON = QUESTIONS_DETAIL_JSON+"_"+page.getId()+"_"+qid+".json";
+			String questionDetailJSON = readFile(DETAIL_JSON);
 			if("".equals(questionDetailJSON)){
 				questionDetailJSON = getJsonWithEndpointRestMethod(ENDPOINT+"/"+survey_id+"/pages/"+page.getId()+"/questions/"+qid, REST_METHOD);
 				try {
-					writeFile(QUESTIONS_DETAIL_JSON, questionDetailJSON);
+					writeFile(DETAIL_JSON, questionDetailJSON);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
