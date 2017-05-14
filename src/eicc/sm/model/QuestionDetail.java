@@ -15,6 +15,7 @@ public class QuestionDetail {
 	QuestionValidation questionValidation;
 	List<String> headings;
 	boolean forced_ranking;
+	
 	public QuestionSorting getQuestionSorting() {
 		return questionSorting;
 	}

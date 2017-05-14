@@ -7,7 +7,20 @@ public class Question {
 	String heading;
 	String id;
 	QuestionDetail questionDetail;
+	List<Answer> answers;
 	
+	public QuestionDetail getQuestionDetail() {
+		return questionDetail;
+	}
+	public void setQuestionDetail(QuestionDetail questionDetail) {
+		this.questionDetail = questionDetail;
+	}
+	public List<Answer> getAnswers() {
+		return answers;
+	}
+	public void setAnswers(List<Answer> answers) {
+		this.answers = answers;
+	}
 	public QuestionDetail getQuestionDetails() {
 		return questionDetail;
 	}

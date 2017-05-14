@@ -15,11 +15,11 @@ public class Pages {
 		this.total = total;
 	}
 	
-	public List<Page> getPages() {
+	public List<Page> getPageList() {
 		return pages;
 	}
 	
-	public void setPages(List<Page> pages) {
+	public void setPageList(List<Page> pages) {
 		this.pages = pages;
 	}
 }

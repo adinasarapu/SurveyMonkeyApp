@@ -9,6 +9,7 @@ public class ResponseDetail {
 	String date_modified;
 	String response_status;
 	List<ResponsePage> pages;
+	
 	public String getId() {
 		return id;
 	}

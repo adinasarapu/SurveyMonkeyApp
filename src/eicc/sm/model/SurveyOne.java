@@ -2,7 +2,7 @@ package eicc.sm.model;
 
 import java.util.List;
 
-public class SurveyDetail {
+public class SurveyOne {
 	String id;
 	String servey_title;
 	String dateCreated;

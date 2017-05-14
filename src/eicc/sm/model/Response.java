@@ -14,7 +14,14 @@ public class Response {
 	String surveyId;
 	Collector collector;
 	ResponseDetail responseDetail;
+	Answer answer;
 	
+	public Answer getAnswer() {
+		return answer;
+	}
+	public void setAnswer(Answer answer) {
+		this.answer = answer;
+	}
 	public ResponseDetail getResponseDetail() {
 		return responseDetail;
 	}
@@ -27,10 +34,10 @@ public class Response {
 	public void setCollector(Collector collector) {
 		this.collector = collector;
 	}
-	public String getId() {
+	public String getResponseID() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setResponseID(String id) {
 		this.id = id;
 	}
 	public String getTotalTime() {
