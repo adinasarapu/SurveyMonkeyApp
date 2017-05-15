@@ -85,24 +85,7 @@ public class SurveyApp {
 	 	/collectors/{id}/recipients
 	 	 
 	 	/collectors/{id}/responses/{id}
-	*/
-	// static String HOST = "https://api.surveymonkey.net/v3/";
-	//static String Access_Token = "bearer DR729crsCRsLBsqLMtAFjZnhiaihuC4cQqULmHqSsrcZILrfvO18Wh9evj8Bnj2DP-8MzVX3uNlAL63qpY.-MtfS2lW.1HwXx0OiJn2MOA3xWeTx.lFtRumFVXaZqizl";
-	
-	/*12088715	EDSP/CHD/COG- Maternal Questionnaire version 4.0
-	112574091	New Survey
-	8149251	Mother's Follow-up Questionnaire
-	21915957	EDSP/CHD/COG- Maternal Questionnaire version 4.0 Spanish version
-	16046660	DOWN SYNDROME PHENOTYPE PROJECT BACKGROUND QUESTIONNAIRE
-	15059497	Emory DS Cognition Project - Site PHI Risk Assessment
-	12100941	Training version EDSP/CHD/COG- Maternal Questionnaire version 4.0
-	3622815	Emory Down Syndrome Project - Maternal Questionnaire
-	12012987	IDDRC investigators
-	3621895	Emory Down Syndrome Project - Paternal (Father's) Questionnaire
-	5254205	TRAINING ONLY  Emory Down Syndrome Project - Maternal Questionnaire
-	2960590	old version- training -EDSP - Maternal Questionnaire
-	3115009	TRAINING ONLY - EDSP - Paternal (Father's) Questionnaire*/
-			
+	*/	
 	static String ENDPOINT = null;
 	static String Access_Token = null;
 	static String JSON_FOLDER = null;
